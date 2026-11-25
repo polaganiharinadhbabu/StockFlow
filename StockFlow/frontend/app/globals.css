@@ -162,6 +162,11 @@ input::placeholder {
   grid-template-columns: 248px minmax(0, 1fr);
 }
 
+.mobile-header,
+.mobile-backdrop {
+  display: none;
+}
+
 .side {
   position: sticky;
   top: 0;
@@ -523,49 +528,140 @@ code {
 
 @media (max-width: 860px) {
   .layout {
-    grid-template-columns: 1fr;
+    display: block;
+    min-height: 100vh;
+  }
+
+  .mobile-header {
+    position: sticky;
+    z-index: 15;
+    top: 0;
+    display: flex;
+    min-height: 60px;
+    align-items: center;
+    padding: 8px 14px;
+    gap: 12px;
+    background: var(--dark);
+    color: #fff;
+  }
+
+  .mobile-menu-toggle {
+    display: grid;
+    width: 40px;
+    height: 40px;
+    flex: none;
+    padding: 0;
+    border: 1px solid rgb(255 255 255 / 28%);
+    border-radius: 9px;
+    background: transparent;
+    color: inherit;
+    cursor: pointer;
+    place-items: center;
+  }
+
+  .menu-lines {
+    display: flex;
+    width: 18px;
+    flex-direction: column;
+    gap: 4px;
+  }
+
+  .menu-lines span {
+    height: 2px;
+    border-radius: 2px;
+    background: currentColor;
+    transition: transform 160ms ease, opacity 160ms ease;
+  }
+
+  .mobile-menu-toggle[aria-expanded="true"] .menu-lines span:first-child {
+    transform: translateY(6px) rotate(45deg);
+  }
+
+  .mobile-menu-toggle[aria-expanded="true"] .menu-lines span:nth-child(2) {
+    opacity: 0;
+  }
+
+  .mobile-menu-toggle[aria-expanded="true"] .menu-lines span:last-child {
+    transform: translateY(-6px) rotate(-45deg);
+  }
+
+  .mobile-brand {
+    font-size: 1.15rem;
+    font-weight: 750;
+    white-space: nowrap;
+  }
+
+  .mobile-org {
+    overflow: hidden;
+    min-width: 0;
+    margin-left: auto;
+    color: #c8d8d5;
+    font-size: 0.8rem;
+    text-overflow: ellipsis;
+    white-space: nowrap;
   }
 
   .side {
-    position: static;
-    height: auto;
-    flex-direction: row;
-    flex-wrap: wrap;
-    align-items: center;
-    padding: 12px 16px;
-    gap: 8px;
+    position: fixed;
+    z-index: 20;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    width: min(288px, calc(100vw - 48px));
+    height: 100vh;
+    height: 100dvh;
+    padding: 24px 14px;
+    transform: translateX(-100%);
+    visibility: hidden;
+    transition: transform 180ms ease, visibility 0s linear 180ms;
+  }
+
+  .side.mobile-open {
+    transform: translateX(0);
+    visibility: visible;
+    transition: transform 180ms ease;
+  }
+
+  .mobile-backdrop {
+    position: fixed;
+    z-index: 18;
+    display: block;
+    padding: 0;
+    border: 0;
+    background: rgb(7 20 19 / 55%);
+    inset: 0;
+    cursor: pointer;
   }
 
   .brand {
-    padding: 0 12px 0 0;
+    padding: 0 10px 24px;
   }
 
   .org {
-    max-width: 220px;
-    margin: 0 auto 0 0;
+    max-width: 100%;
+    margin: -13px 8px 20px;
   }
 
   .side nav {
-    flex: 1 0 100%;
-    flex-direction: row;
-    order: 3;
+    flex: 1;
+    flex-direction: column;
   }
 
   .side nav a {
-    flex: 1;
-    padding: 9px 8px;
-    border-bottom: 2px solid transparent;
-    border-left: 0;
-    text-align: center;
+    flex: none;
+    padding: 10px 12px;
+    border-bottom: 0;
+    border-left: 3px solid transparent;
+    text-align: left;
   }
 
   .side nav a.on {
-    border-bottom-color: var(--accent);
-    border-left: 0;
+    border-left-color: var(--accent);
   }
 
   .signout {
-    padding: 8px;
+    margin-top: auto;
+    padding: 10px 12px;
   }
 
   main {
@@ -575,7 +671,11 @@ code {
 
 @media (max-width: 640px) {
   .auth {
+    min-height: 100vh;
+    min-height: 100svh;
     grid-template-columns: 1fr;
+    align-content: start;
+    background: var(--bg);
   }
 
   .hero {
@@ -602,8 +702,11 @@ code {
   }
 
   .auth-card {
-    width: 100%;
-    padding: 20px;
+    width: min(calc(100% - 28px), 430px);
+    margin: 16px auto 28px;
+    padding: 24px;
+    border: 1px solid var(--line);
+    box-shadow: var(--shadow);
   }
 
   main {
