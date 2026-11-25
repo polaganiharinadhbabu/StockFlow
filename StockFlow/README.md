@@ -10,8 +10,9 @@ A multi-tenant inventory MVP. Each owner signs up with an organization and only 
 | Login | Email and password (bcrypt) with JWT tokens |
 
 ## Run it locally (Windows PowerShell)
-You need Node.js 18+ and either Docker (for PostgreSQL) or your own reachable PostgreSQL server. Run these commands from the repository root.
+You need Node.js 18+ and either Docker (for PostgreSQL) or your own reachable PostgreSQL server. From the repository root:
 ```powershell
+Set-Location .\StockFlow
 docker compose up -d                      # starts local PostgreSQL (skip if using your own)
 Set-Location .\backend
 if (!(Test-Path .env)) { Copy-Item .env.example .env }
@@ -22,7 +23,7 @@ npm run dev                               # API on http://localhost:4000
 ```
 In a second terminal:
 ```powershell
-Set-Location .\frontend
+Set-Location .\StockFlow\frontend
 npm install
 npm run dev                               # website on http://localhost:3000
 ```
@@ -51,10 +52,15 @@ If your Supabase direct database hostname resolves to IPv6 but your network cann
 
 ## Test
 ```powershell
-Set-Location .\backend
+Set-Location .\StockFlow\backend
 npm test
 ```
 Manual checks: two organizations with the same SKU, duplicate SKU rejected, negative quantity rejected, clear an optional price, change the threshold, adjust stock, delete with confirm, sign out and in, resize to 360 / 768 / desktop, restart and confirm the data is still there.
 
 ## Deploy
-Create a hosted PostgreSQL database. Backend (for example Render): set `DATABASE_URL` and `JWT_SECRET`, run `npm run db:push` from `backend`, and start with `npm start`. Frontend (for example Vercel): set `API_URL` to the backend address. Never commit `.env`; use HTTPS. Then push to a public GitHub repository with regular commits, email your start time and repository link, and submit the live URL.
+This project is stored under `StockFlow/` in the repository. Configure each deployment service's root directory relative to the repository root:
+
+- **Render backend:** `StockFlow/backend`. Set `DATABASE_URL` and `JWT_SECRET`, use `npm install` as the build command, and `npm start` as the start command. Run `npm run db:push` from this directory when setting up the database.
+- **Vercel frontend:** `StockFlow/frontend`. Set `API_URL` to the deployed backend URL (without a trailing slash), then redeploy.
+
+Never commit `.env`; use HTTPS.
