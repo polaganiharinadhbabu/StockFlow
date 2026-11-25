@@ -1,0 +1,45 @@
+// The database tables. Prisma turns this file into SQL for PostgreSQL.
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// One organization per owner: this is the "tenant".
+model Organization {
+  id               Int       @id @default(autoincrement())
+  name             String
+  defaultThreshold Int       @default(5)
+  users            User[]
+  products         Product[]
+}
+
+model User {
+  id           Int          @id @default(autoincrement())
+  email        String       @unique
+  passwordHash String
+  orgId        Int
+  org          Organization @relation(fields: [orgId], references: [id])
+}
+
+model Product {
+  id                Int          @id @default(autoincrement())
+  orgId             Int
+  org               Organization @relation(fields: [orgId], references: [id])
+  name              String
+  sku               String
+  description       String?
+  quantity          Int          @default(0)
+  costPrice         Decimal?     @db.Decimal(12, 2)
+  sellingPrice      Decimal?     @db.Decimal(12, 2)
+  lowStockThreshold Int? // empty means: use the organization default
+  createdAt         DateTime     @default(now())
+  updatedAt         DateTime     @updatedAt
+  lastUpdatedBy     String?
+
+  @@unique([orgId, sku]) // a SKU may repeat across organizations, never inside one
+  @@index([orgId])
+}
