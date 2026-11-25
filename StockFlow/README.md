@@ -58,9 +58,11 @@ npm test
 Manual checks: two organizations with the same SKU, duplicate SKU rejected, negative quantity rejected, clear an optional price, change the threshold, adjust stock, delete with confirm, sign out and in, resize to 360 / 768 / desktop, restart and confirm the data is still there.
 
 ## Deploy
-This project is stored under `StockFlow/` in the repository. Configure each deployment service's root directory relative to the repository root:
+This project uses [Vercel Services](https://vercel.com/docs/services) so the frontend and backend build and deploy together as one project.
 
-- **Render backend:** `StockFlow/backend`. Set `DATABASE_URL` and `JWT_SECRET`, use `npm install` as the build command, and `npm start` as the start command. Run `npm run db:push` from this directory when setting up the database.
-- **Vercel frontend:** `StockFlow/frontend`. Set `API_URL` to the deployed backend URL (without a trailing slash), then redeploy.
+1. Import the GitHub repository into Vercel and set the project root directory to `StockFlow`.
+2. Choose **Services** in the import flow. The `vercel.json` file defines the Next.js frontend and Express backend and routes `/api/*` requests to the backend.
+3. Add `DATABASE_URL` and `JWT_SECRET` as Vercel project environment variables. Keep them out of Git.
+4. Deploy. The frontend and backend share one deployment URL; no `API_URL` is needed for Vercel Services.
 
-Never commit `.env`; use HTTPS.
+For local development, the frontend keeps its `/api` rewrite to the Express server at `http://localhost:4000`. Create the database tables once by running `npm run db:push` from `StockFlow/backend`.
